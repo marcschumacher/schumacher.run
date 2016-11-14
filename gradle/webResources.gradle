@@ -1,0 +1,31 @@
+ext {
+    foundationVersion = '6.2.3'
+    highlightjsVersion = '9.6.0'
+    jqueryVersion = '3.1.1'
+    modernizrVersion = '2.8.3'
+}
+
+bower {
+    installBase = "$jbake.srcDirName/assets/vendor"
+
+    'foundation-sites'(foundationVersion){
+        source 'dist/**/*.css'
+        source 'dist/**/*.js'
+
+        excludes 'fastclick'
+        excludes 'jquery-placeholder'
+        excludes 'jquery.cookie'
+    }
+
+    'foundation-icon-fonts'(){
+        source 'foundation-icons*'
+    }
+
+    'highlightjs'(highlightjsVersion){
+        source 'highlight.pack.min.js'
+        source 'styles/darcula.css'
+        excludes 'default.css'
+    }
+}
+
+bake.dependsOn bowerInstall

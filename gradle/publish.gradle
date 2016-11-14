@@ -1,0 +1,5 @@
+
+task publish(type: Exec) {
+    executable "rsync"
+    args "-ruvt", "--delete", "$buildDir/${jbake.destDirName}/", "${config.ssh.host}:${config.ssh.destination}/"
+}

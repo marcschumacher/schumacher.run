@@ -1,0 +1,64 @@
+buildscript {
+  repositories {
+      maven { url "http://dl.bintray.com/calmdev/gradle-plugins" }
+      mavenLocal()
+      jcenter()
+  }
+
+  dependencies {
+    classpath 'me.champeau.gradle:jbake-gradle-plugin:0.3.0-alpha.1'
+    classpath 'org.asciidoctor:asciidoctorj-diagram:1.5.0'
+  }
+}
+
+plugins {
+    id 'org.akhikhl.gretty' version '1.4.0' apply false
+    id 'com.craigburke.bower-installer' version '2.5.1'
+    id 'distribution'
+}
+
+apply plugin: 'me.champeau.jbake'
+apply from: 'gradle/distribution.gradle'
+apply from: 'gradle/environment.gradle'
+apply from: 'gradle/webResources.gradle'
+
+repositories {
+  mavenLocal()
+  jcenter()
+}
+
+if ( env == "local" ){
+  apply plugin: 'war'
+  apply plugin: 'org.akhikhl.gretty'
+
+  gretty {
+    httpPort = config.server.port
+    contextPath = config.server.contextPath
+    extraResourceBases = [bake.output]
+  }
+}
+else {
+  apply from: 'gradle/publish.gradle'
+}
+
+jbake{
+  version = "2.5.0"
+  asciidoctorjVersion = "1.5.4.1"
+  configuration['blog.title'] = "Marcs Blog"
+  configuration['blog.description'] = "'Infos und Neuigkeiten von Marc Schumacher'"
+  configuration['db.store'] = "local"
+  configuration['db.path']= "build/cache"
+  configuration['site.host'] = config.server.url
+  configuration['render.tags'] = true
+  configuration['site.contextPath'] = config.server.contextPath
+  configuration['foundation.version'] = foundationVersion
+  configuration['twitter.user'] = "@jackeroo_marc"
+  configuration['asciidoctor.option.requires'] = "asciidoctor-diagram"
+  configuration['asciidoctor.attributes'] = [
+    "sourceDir=${projectDir}",
+    "imagesdir=${config.server.contextPath}img",
+    "imagesoutdir=${bake.input}/assets/img",
+    "source-highlighter=highlight.js",
+    "icons=font"
+  ]
+}
